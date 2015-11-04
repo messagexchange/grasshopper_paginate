@@ -21,9 +21,12 @@ $ ->
   $('html').on 'keyup', 'input.goto-page', (event) ->
     if event.which == 13
       gotoInput = $(this)
+      hiddenLink = gotoInput.parent().find 'a.hidden-link'
       totalPage = parseInt gotoInput.attr('total')
       url = gotoInput.attr 'url'
       newPage = parseInt(gotoInput.val()) || 1
       newPage = totalPage if newPage > totalPage
       newUrl = url.replace 'page_number', newPage
-      window.location.href = newUrl
+      hiddenLink.attr 'href', newUrl
+      hiddenLink.click()
+      window.location.href = newUrl unless gotoInput.hasClass('ajax')

@@ -2,28 +2,34 @@ require 'will_paginate/view_helpers/action_view'
 
 module Grasshopper
   module Paginate
+    # Grasshopper specific pagination renderer
     class Renderer < ::WillPaginate::ActionView::LinkRenderer
-      
       def to_html
         if  @options[:enable_per_page_input]
-          tag :div, per_page_html + navigation_html, class: 'grasshopper-pagination'
+          tag :div, per_page_html + navigation_html,
+              class: 'grasshopper-pagination'
         else
           super
         end
       end
-	
+
       protected
 
       def gap
-        tag :li, link(super, nil), :class => 'goto-gap'
+        tag :li, link(super, nil), class: 'goto-gap'
       end
 
       def page_number(page)
-        tag :li, link(page, page, :rel => rel_value(page)), :class => ('current' if page == current_page)
+        tag :li,
+            link(page, page, rel: rel_value(page)),
+            class: ('current' if page == current_page)
       end
 
       def previous_or_next_page(page, text, classname)
-        tag :li, link(text, page || '#'), :class => [classname[0..3], classname, ('unavailable' unless page)].join(' ')
+        tag :li,
+            link(text, page || '#'),
+            class: [classname[0..3], classname, ('unavailable' unless page)]
+              .join(' ')
       end
 
       def html_container(html)
@@ -40,32 +46,18 @@ module Grasshopper
           view_per_page += tag(
             :li,
             tag(:a, per_page, href: first_page_w_per_page(per_page)),
-            class: (per_page == @collection.per_page ? "current":"" )
+            class: (per_page == @collection.per_page ? 'current' : '')
           )
         end
-        content = tag(:ul, view_per_page , class: 'pagination per-page')
+        tag(:ul, view_per_page, class: 'pagination per-page')
       end
 
       def navigation_html
-        # First page link
-        first = previous_or_next_page(current_page > 1 ? 1 : nil, @options[:first_label], :first_page)
-
-        # Previous page link
-        previous  = previous_or_next_page(current_page > 1 ?  current_page-1 : nil, @options[:previous_label], :previous_label) 
-
-        # Page input from user
-        page_input = tag(:li, tag(:input, nil, { class: 'default-goto-page goto-page', value: current_page, url: url('page_number'),total: total_pages }))
-        page_input_message  = tag(:li, tag(:h6," of #{total_pages} pages"))
-        p_input =  page_input + page_input_message
-
-        # Next page link
-        nextt = previous_or_next_page(current_page < total_pages ? current_page+1 : nil, @options[:next_label], :next_label)
-
-        # Last page link
-        last  = previous_or_next_page(current_page < total_pages ? total_pages : nil , @options[:last_label], :last_page) 
-
         # Putting all links together
-        content = tag(:ul , first + previous + p_input + nextt + last , class: 'pagination page-navigation')
+        navigation_html = first_page_link + previous_page_link +
+                          page_input_html + next_page_link +
+                          last_page_link
+        tag(:ul, navigation_html, class: 'pagination page-navigation')
       end
 
       def first_page_w_per_page(per_page)
@@ -75,7 +67,9 @@ module Grasshopper
 
       def merge_per_page(original_url, per_page)
         uri = URI(original_url)
-        merged_params = Rack::Utils.parse_nested_query(uri.query).merge({"per_page"=> per_page})
+        merged_params = Rack::Utils.parse_nested_query(uri.query).merge(
+          'per_page' => per_page
+        )
         merged_query  = Rack::Utils.build_nested_query(merged_params)
         uri.query = merged_query
         uri.to_s
@@ -92,7 +86,10 @@ module Grasshopper
         hidden_link = tag :a, nil, class: 'hidden-link'
         input += hidden_link
         input = tag :li, input
-        total_count = tag :li, tag(:a, "&nbsp; / &nbsp; #{total_pages}".html_safe, class: 'total-pages'), class: 'unavailable'
+        mesg_html = "&nbsp; / &nbsp; #{total_pages}".html_safe
+        total_count = tag :li,
+                          tag(:a, mesg_html, class: 'total-pages'),
+                          class: 'unavailable'
         previous_page + input + total_count + next_page
       end
 
@@ -104,6 +101,50 @@ module Grasshopper
           total: total_pages
         }
       end
-		end
+
+      def page_input_html
+        hclas = 'default-goto-page goto-page' + (@options[:ajax] ? ' ajax' : '')
+        user_input =
+          tag(:input, nil, class: hclas,
+                           value: current_page, url: url('page_number'),
+                           total: total_pages
+             )
+
+        # Hidden link for ajax support
+        hidden_link = tag(:a, nil, class: 'hidden-link')
+        user_input  = tag(:li, user_input + hidden_link)
+
+        page_input_message  = tag(:li, tag(:h6, " of #{total_pages} pages"))
+        user_input + page_input_message
+      end
+
+      def first_page_link
+        page_number = current_page > 1 ? 1 : nil
+        previous_or_next_page(
+          page_number, @options[:first_label], :first_page
+        )
+      end
+
+      def previous_page_link
+        page_number = current_page > 1 ? current_page - 1 : nil
+        previous_or_next_page(
+          page_number, @options[:previous_label], :previous_label
+        )
+      end
+
+      def next_page_link
+        page_number = current_page < total_pages ? current_page + 1 : nil
+        previous_or_next_page(
+          page_number, @options[:next_label], :next_label
+        )
+      end
+
+      def last_page_link
+        page_number = current_page < total_pages ? total_pages : nil
+        previous_or_next_page(
+          page_number, @options[:last_label], :last_page
+        )
+      end
+    end
   end
 end
