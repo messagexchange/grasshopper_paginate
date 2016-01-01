@@ -5,10 +5,12 @@ module Grasshopper
   module Paginate
     module ActiveRecord
       module Pagination
-        def smart_paginate(options={})
+        def smart_paginate(options = {})
           per_page = self.per_page
           per_page = options[:per_page].to_i if options[:per_page]
-          options[:per_page] = (per_page*1.5).to_i if self.count <= per_page*1.5
+          if (options[:total_entries] || self.count) <= per_page * 1.5
+            options[:per_page] = (per_page * 1.5).to_i
+          end
           paginate options
         end
       end
