@@ -1,0 +1,3 @@
+zh-CN:
+  view_per_page: '页面浏览量: '
+  page_navigation: "页，共%{total_pages}页"

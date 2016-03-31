@@ -1,0 +1,3 @@
+ja:
+  view_per_page: 'ページ別訪問数: '
+  page_navigation: "/%{total_pages}ページ"

@@ -41,7 +41,7 @@ module Grasshopper
 
       def per_page_html
         # User options for per page
-        view_per_page = tag :li, tag(:h6, 'View per page: ')
+        view_per_page = tag :li, tag(:h6, I18n.t('view_per_page'))
         Grasshopper::Paginate.per_page_options.each do |per_page|
           view_per_page += tag(
             :li,
@@ -114,7 +114,8 @@ module Grasshopper
         hidden_link = tag(:a, nil, class: 'hidden-link')
         user_input  = tag(:li, user_input + hidden_link)
 
-        page_input_message  = tag(:li, tag(:h6, " of #{total_pages} pages"))
+        page_input_message  =
+          tag(:li, tag(:h6, I18n.t('page_navigation', total_pages: total_pages)))
         user_input + page_input_message
       end
 

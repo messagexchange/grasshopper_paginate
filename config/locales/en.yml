@@ -1,0 +1,3 @@
+en:
+  view_per_page: 'View per page: '
+  page_navigation: " of %{total_pages} pages"
