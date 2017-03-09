@@ -42,7 +42,8 @@ module Grasshopper
       def per_page_html
         # User options for per page
         view_per_page = tag :li, tag(:h6, I18n.t('view_per_page'))
-        Grasshopper::Paginate.per_page_options.each do |per_page|
+        (@options[:per_page_options] ||
+         Grasshopper::Paginate.per_page_options).each do |per_page|
           view_per_page += tag(
             :li,
             tag(:a, per_page, href: first_page_w_per_page(per_page)),
