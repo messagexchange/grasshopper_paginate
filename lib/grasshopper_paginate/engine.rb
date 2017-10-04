@@ -10,12 +10,6 @@ module Grasshopper
           include Grasshopper::Paginate::Helper
         end
       end
-
-      initializer 'active record extention' do |app|
-        ActiveSupport.on_load(:active_record) do
-          require 'grasshopper_paginate/active_record'
-        end
-      end
     end
   end
 end
