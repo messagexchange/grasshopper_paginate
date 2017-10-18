@@ -5,7 +5,7 @@ module Grasshopper
     # and then get back to use the super total_pages from collection object
     module CollectionMethods
       def total_pages
-        return super if @_grasshopper_total_pages
+        return super if total_entries.zero? || @_grasshopper_total_pages
         @_grasshopper_total_pages = super
         2
       end
