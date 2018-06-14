@@ -19,7 +19,6 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
 
   gem.add_dependency 'rails', '>= 4.2.0'
-  gem.add_dependency 'foundation-rails',  '~> 5.5', '>= 5.5.0'
   gem.add_dependency 'jquery-rails', '~> 4.3'
   gem.add_dependency 'sass-rails', '~> 5.0'
   gem.add_dependency 'will_paginate', '~> 3.0'
